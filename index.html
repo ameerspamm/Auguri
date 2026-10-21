@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tanti Auguri Papà!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  GUIDA RAPIDA: cerca le icone 🎵 🖼️ 💬 ✏️ per trovare tutto  ║
+  ║  quello che devi sostituire.                                 ║
+  ║  🎵 musica1.mp3  → canzone durante l’album                   ║
+  ║  🎵 musica2.mp3  → canzone del finale con i fuochi           ║
+  ║  🖼️ foto1.jpg … foto5.jpg e foto-finale.jpg → le tue foto    ║
+  ║  💬 didascalie sotto ogni foto                               ║
+  ║  ✏️ anni compiuti nella schermata iniziale                   ║
+  ╚══════════════════════════════════════════════════════════════╝
+  Metti i file (mp3 e foto) nella STESSA cartella di index.html.
+-->
+
+<style>
+:root{--gold:#d4af37;--gold2:#f6e27a;--bg:#07070c;--paper:#fbf6ea;--ink:#3b2f1e}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none;background:var(--bg);color:#fff;font-family:'Cormorant Garamond',Georgia,serif}
+body{background:radial-gradient(ellipse at 50% 0%,#2a1d06 0%,var(--bg) 62%)}
+
+/* Schermate: una sola attiva alla volta, con dissolvenza */
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom);text-align:center;opacity:0;visibility:hidden;transition:opacity 1.2s ease,visibility 1.2s}
+.screen.active{opacity:1;visibility:visible;transition-delay:.5s}
+.gold{background:linear-gradient(120deg,var(--gold) 0%,var(--gold2) 45%,var(--gold) 70%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.script{font-family:'Great Vibes','Playfair Display',cursive;font-weight:400}
+
+.btn{font:700 .95rem 'Playfair Display',Georgia,serif;letter-spacing:.06em;color:#1a1204;background:linear-gradient(135deg,var(--gold2),var(--gold));border:0;border-radius:50px;padding:.7rem 1.2rem;cursor:pointer;box-shadow:0 0 22px rgba(212,175,55,.4);transition:transform .2s,opacity .3s}
+.btn:active{transform:scale(.95)}
+.btn:disabled{opacity:.3;cursor:default}
+.btn:focus-visible,#mute:focus-visible{outline:2px solid #fff;outline-offset:3px}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}}
+@keyframes pulse{50%{box-shadow:0 0 44px rgba(246,226,122,.9)}}
+@keyframes beat{50%{transform:scale(1.18)}}
+
+/* 1 · INTRO */
+#intro::before{content:'';position:absolute;inset:14px;border:1px solid rgba(212,175,55,.35);border-radius:6px;pointer-events:none}
+#intro h1{font-size:clamp(2.7rem,11.5vw,5.8rem);line-height:1.2;animation:rise 1.6s both}
+.heart{display:inline-block;animation:beat 1.4s infinite}
+.years{font:500 clamp(1.5rem,6.5vw,2.8rem)/1 'Playfair Display',serif;letter-spacing:.22em;animation:rise 1.6s .4s both}
+.line{width:min(60vw,260px);height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.sub{font-style:italic;font-size:clamp(1.05rem,4vw,1.35rem);color:#cdbd8a;animation:rise 1.6s .6s both}
+#start{font-size:1.1rem;padding:1rem 2.2rem;margin-top:.8rem;animation:rise 1.6s .9s both,pulse 2.4s 2.5s infinite}
+
+/* 2 · LIBRO 3D */
+.book{position:relative;width:min(86vw,calc(66vh*.72),420px);width:min(86vw,calc(66dvh*.72),420px);aspect-ratio:5/7;perspective:1800px;cursor:pointer}
+.book::before{content:'';position:absolute;inset:0;border-radius:4px 10px 10px 4px;background:#cfc3a6;box-shadow:0 30px 60px rgba(0,0,0,.85),0 0 0 1px rgba(212,175,55,.4),5px 0 0 -1px #e8dfc8,9px 0 0 -2px #bfb292}
+.leaf{position:absolute;inset:0;transform-origin:left center;transform-style:preserve-3d;transition:transform 1s cubic-bezier(.645,.045,.355,1),visibility 1s}
+.leaf.flipped{transform:rotateY(-180deg);visibility:hidden}
+.face{position:absolute;inset:0;border-radius:4px 10px 10px 4px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.front{display:flex;flex-direction:column;padding:6% 6% 3% 9%;background:var(--paper);color:var(--ink);box-shadow:inset 16px 0 18px -12px rgba(0,0,0,.4)}
+.back{transform:rotateY(180deg);display:flex;align-items:center;justify-content:center;font-size:2rem;color:rgba(160,125,40,.5);background:linear-gradient(90deg,#e6dbbf,var(--paper))}
+figure{flex:1;display:flex;flex-direction:column;gap:.8rem;min-height:0}
+figure img{flex:1 1 0;min-height:0;width:100%;object-fit:cover;border:6px solid #fff;outline:1px solid rgba(160,125,40,.6);box-shadow:0 4px 12px rgba(0,0,0,.35);background:linear-gradient(135deg,#d9c48a,#8a6d1f)}
+figcaption{flex:0 0 4.6em;display:flex;align-items:center;justify-content:center;overflow:auto;font-style:italic;font-size:clamp(1.05rem,3.9vw,1.3rem);line-height:1.3}
+.num{text-align:center;font:.8rem 'Playfair Display',serif;color:#9a7b2a;padding-top:.2rem}
+.nav{display:flex;align-items:center;gap:.9rem}
+.dots{display:flex;gap:.5rem}
+.dots i{width:8px;height:8px;border-radius:50%;background:#4a3d16;transition:.3s}
+.dots i.on{background:var(--gold2);transform:scale(1.5)}
+.hint{font-style:italic;font-size:.95rem;color:#9c8c5a}
+#mute{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:12px;z-index:50;display:none;width:42px;height:42px;border-radius:50%;border:1px solid var(--gold);background:rgba(0,0,0,.55);color:var(--gold2);font-size:1.1rem;cursor:pointer}
+#mute.show{display:block}
+
+/* 3 · FINALE */
+#fx{position:absolute;inset:0;width:100%;height:100%}
+.fin{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:1.1rem}
+#finale h2{font-size:clamp(2.4rem,9.5vw,4.4rem);line-height:1.15;filter:drop-shadow(0 0 14px rgba(212,175,55,.55));animation:rise 2s .6s both}
+.frame{width:min(62vw,calc(38vh*.8),300px);width:min(62vw,calc(38dvh*.8),300px);aspect-ratio:4/5;padding:10px;border-radius:6px;background:linear-gradient(135deg,var(--gold2),var(--gold),#8a6d1f,var(--gold2));box-shadow:0 0 44px rgba(212,175,55,.5),0 14px 40px #000;animation:rise 2s 1.1s both}
+.frame img{display:block;width:100%;height:100%;object-fit:cover;border:3px solid #1a1204;background:#222}
+.sig{font-style:italic;font-size:clamp(1.15rem,4.5vw,1.5rem);color:var(--gold2);text-shadow:0 2px 8px #000;animation:rise 2s 1.5s both}
+#again{background:none;box-shadow:none;border:1px solid rgba(212,175,55,.6);color:var(--gold2);font-size:.85rem;padding:.5rem 1.1rem}
+
+@media (prefers-reduced-motion:reduce){.leaf{transition-duration:.01s}.heart,#start{animation:none}}
+</style>
+</head>
+<body>
+
+<!-- 🎵 PERCORSO CANZONE 1 (Durante il libro): sostituisci "musica1.mp3" con il tuo file -->
+<audio id="m1" src="musica1.mp3" loop preload="auto"></audio>
+<!-- 🎵 PERCORSO CANZONE 2 (Schermata finale con fuochi d’artificio): sostituisci "musica2.mp3" con il tuo file -->
+<audio id="m2" src="musica2.mp3" loop preload="auto"></audio>
+
+<button id="mute" aria-label="Audio on/off">🔊</button>
+
+<!-- ═══════════ 1 · SCHERMATA INIZIALE ═══════════ -->
+<section id="intro" class="screen active">
+  <!-- ✏️ TITOLO: puoi cambiare il testo degli auguri -->
+  <h1 class="script"><span class="gold">عيد ميلاد سعيد يا بابا</span> <span class="heart">❤️</span></h1>
+  <div class="line"></div>
+  <!-- ✏️ ANNI COMPIUTI: cambia il numero "50" con i suoi anni -->
+  <p class="years gold"><span>49</span> عام</p>
+  <!-- ✏️ FRASE SOTTO AL TITOLO: modifica questo testo -->
+  <p class="sub">ألبوم ذكريات، ليك أنتِ برك</p>
+  <button class="btn" id="start">حلّ الهدية 🎁</button>
+</section>
+
+<!-- ═══════════ 2 · ALBUM FOTOGRAFICO 3D (5 pagine) ═══════════ -->
+<section id="book" class="screen">
+  <div class="book" id="bk">
+
+    <!-- ──────── PAGINA 1 ──────── -->
+    <div class="leaf"><div class="face front"><figure>
+      <!-- 🖼️ PERCORSO FOTO PAGINA 1: sostituisci l’URL Unsplash con "foto1.jpg" (o il tuo percorso) -->
+      <img src="https://lh3.googleusercontent.com/d/1NgveVCWJaxbNtC75_B2tk2RMlXppOJ4Y" alt="Foto pagina 1">
+      <!-- 💬 DIDASCALIA FOTO PAGINA 1: modifica questo testo -->
+      <figcaption>صاحب العيد والعزيز على قلوبنا</figcaption>
+    </figure><div class="num">1</div></div><div class="face back">✦</div></div>
+
+    <!-- ──────── PAGINA 2 ──────── -->
+    <div class="leaf"><div class="face front"><figure>
+      <!-- 🖼️ PERCORSO FOTO PAGINA 2: sostituisci l’URL Unsplash con "foto2.jpg" (o il tuo percorso) -->
+      <img src="https://lh3.googleusercontent.com/d/1UdKD0hl1rtHbGQ9rgzMuOQMYwf5ayOkC" alt="Foto pagina 2">
+      <!-- 💬 DIDASCALIA FOTO PAGINA 2: modifica questo testo -->
+      <figcaption>أحلى المغامرات هي اللي نعملوها مع بعضنا</figcaption>
+    </figure><div class="num">2</div></div><div class="face back">✦</div></div>
+
+    <!-- ──────── PAGINA 3 ──────── -->
+    <div class="leaf"><div class="face front"><figure>
+      <!-- 🖼️ PERCORSO FOTO PAGINA 3: sostituisci l’URL Unsplash con "foto3.jpg" (o il tuo percorso) -->
+      <img src="https://lh3.googleusercontent.com/d/1LBagpO45EVjWEXRauheshRV1Th5ClI-k" alt="Foto pagina 3">
+      <!-- 💬 DIDASCALIA FOTO PAGINA 3: modifica questo testo -->
+      <figcaption>معاك ديما نتفرهدوا</figcaption>
+    </figure><div class="num">3</div></div><div class="face back">✦</div></div>
+
+    <!-- ──────── PAGINA 4 ──────── -->
+    <div class="leaf"><div class="face front"><figure>
+      <!-- 🖼️ PERCORSO FOTO PAGINA 4: sostituisci l’URL Unsplash con "foto4.jpg" (o il tuo percorso) -->
+      <img src="https://lh3.googleusercontent.com/d/1jq6mOOzxYVtIjOx74XuPXBK_xbULMK_a" alt="Foto pagina 4">
+      <!-- 💬 DIDASCALIA FOTO PAGINA 4: modifica questo testo -->
+      <figcaption>ديما فرحان وتفرّح فينا معاك</figcaption>
+    </figure><div class="num">4</div></div><div class="face back">✦</div></div>
+
+    <!-- ──────── PAGINA 5 ──────── -->
+    <div class="leaf"><div class="face front"><figure>
+      <!-- 🖼️ PERCORSO FOTO PAGINA 5: sostituisci l’URL Unsplash con "foto5.jpg" (o il tuo percorso) -->
+      <img src="https://lh3.googleusercontent.com/d/1Bi4Njc0CnSJseKBYSFhr4pEJvZ_p4g4t" style="object-fit: cover; object-position: center top;" alt="Foto pagina 5">
+      <!-- 💬 DIDASCALIA FOTO PAGINA 5: modifica questo testo -->
+      <figcaption>يعطيك الصحة على كل شيء تعمل فيه على خاطرنا</figcaption>
+    </figure><div class="num">5</div></div><div class="face back">✦</div></div>
+
+  </div>
+  <div class="nav">
+    <button class="btn" id="prev">‹ Indietro</button>
+    <div class="dots" id="dots"></div>
+    <button class="btn" id="next">Avanti ›</button>
+  </div>
+  <p class="hint"></p>
+</section>
+
+<!-- ═══════════ 3 · SCHERMATA FINALE ═══════════ -->
+<section id="finale" class="screen">
+  <canvas id="fx"></canvas>
+  <div class="fin">
+    <!-- 💬 MESSAGGIO FINALE: modifica questo testo se vuoi -->
+    <h2 class="script gold">إن شاء الله عيد ميلادك مبروك</h2>
+    <div class="frame">
+      <!-- 🖼️ PERCORSO FOTO FINALE: sostituisci l’URL Unsplash con "foto-finale.jpg" (la tua foto speciale) -->
+      <img src="https://lh3.googleusercontent.com/d/1xZqPqWRU1594UmTjlyKXqGMHJnIOaYxd" alt="Foto finale">
+    </div>
+    <!-- 💬 FIRMA: modifica questo testo -->
+    <p class="sig">بكل حبّي ❤️</p>
+    <button class="btn" id="again">↺ عاود شوف الألبوم</button>
+  </div>
+</section>
+
+<script>
+const $ = id => document.getElementById(id);
+const leaves = [...document.querySelectorAll('.leaf')], N = leaves.length;
+const m1 = $('m1'), m2 = $('m2'), fin = $('finale');
+let cur = 0, busy = false, muted = false;   // cur = pagine già sfogliate (0…N)
+
+/* ---------- Schermate e audio ---------- */
+const show = id => document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+function fade(a, to, ms, done){
+  clearInterval(a._t);
+  const d = (to - a.volume) / (ms / 20);
+  a._t = setInterval(() => {
+    const v = a.volume + d;
+    if ((d > 0 && v >= to) || (d <= 0 && v <= to)) { a.volume = to; clearInterval(a._t); done && done(); }
+    else a.volume = v;
+  }, 20);
+}
+$('mute').onclick = () => { muted = !muted; m1.muted = m2.muted = muted; $('mute').textContent = muted ? '🔇' : '🔊'; };
+
+/* ---------- Intro → Libro ---------- */
+$('start').onclick = () => {
+  m1.volume = 0; m1.play().catch(() => {}); fade(m1, .8, 2500);       // parte la canzone 1
+  m2.muted = true;                                                    // "sblocca" la canzone 2 per iPhone/Safari
+  m2.play().then(() => { m2.pause(); m2.currentTime = 0; m2.muted = muted; }, () => { m2.muted = muted; });
+  $('mute').classList.add('show');
+  show('book');
+};
+
+/* ---------- Libro ---------- */
+leaves.forEach((l, i) => l.style.zIndex = N - i);
+leaves.forEach(() => $('dots').appendChild(document.createElement('i')));
+function render(){
+  leaves.forEach((l, i) => l.classList.toggle('flipped', i < cur));
+  [...$('dots').children].forEach((d, i) => d.classList.toggle('on', i === Math.min(cur, N - 1)));
+  $('prev').disabled = cur === 0;
+  $('next').textContent = cur === N - 1 ? 'Finale 🎆' : 'Avanti ›';
+}
+function next(){
+  if (busy || cur >= N) return;
+  cur++; render();
+  if (cur === N) { busy = true; setTimeout(finale, 1000); }   // ultima pagina sfogliata → finale
+}
+function prev(){ if (!busy && cur > 0) { cur--; render(); } }
+$('next').onclick = next; $('prev').onclick = prev;
+const bk = $('bk');
+bk.onclick = e => { const r = bk.getBoundingClientRect(); (e.clientX - r.left < r.width * .3) ? prev() : next(); };
+let sx = 0;
+bk.addEventListener('touchstart', e => sx = e.touches[0].clientX, {passive:true});
+bk.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) dx < 0 ? next() : prev(); }, {passive:true});
+addEventListener('keydown', e => {
+  if (!$('book').classList.contains('active')) return;
+  if (e.key === 'ArrowRight') next(); if (e.key === 'ArrowLeft') prev();
+});
+render();
+
+/* ---------- Finale con fuochi d’artificio (Canvas) ---------- */
+const cv = $('fx'), cx = cv.getContext('2d');
+let W, H, raf, last = 0, rockets = [], parts = [];
+const cols = ['#f6e27a', '#d4af37', '#ffffff', '#ff5d73', '#ff9f43', '#7ee8fa'];
+function size(){
+  const d = Math.min(devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0);
+}
+addEventListener('resize', () => fin.classList.contains('active') && size());
+function launch(){ rockets.push({x: W * (.12 + Math.random() * .76), y: H, vy: -(7 + Math.random() * 3), ty: H * (.12 + Math.random() * .33)}); }
+function boom(r){
+  const c = cols[Math.random() * cols.length | 0], c2 = cols[Math.random() * cols.length | 0], n = 80;
+  for (let i = 0; i < n; i++) {
+    const a = Math.PI * 2 * i / n, s = 2 + Math.random() * 3.4;
+    parts.push({x: r.x, y: r.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, a: 1, d: .008 + Math.random() * .01, c: i % 3 ? c : c2});
+  }
+}
+function frame(t){
+  if (!fin.classList.contains('active')) { rockets = []; parts = []; return; }   // si ferma quando esci dal finale
+  raf = requestAnimationFrame(frame);
+  const k = Math.min((t - last) / 16.7 || 1, 3); last = t;
+  cx.globalCompositeOperation = 'source-over';
+  cx.fillStyle = 'rgba(7,7,12,' + Math.min(.22 * k, .6) + ')'; cx.fillRect(0, 0, W, H);
+  cx.globalCompositeOperation = 'lighter';
+  if (Math.random() < .045 * k) launch();
+  rockets = rockets.filter(r => {
+    r.y += r.vy * k; cx.globalAlpha = 1; cx.fillStyle = '#fff'; cx.fillRect(r.x - 1, r.y, 2, 7);
+    if (r.y <= r.ty) { boom(r); return false; } return true;
+  });
+  parts = parts.filter(p => {
+    p.vx *= .985; p.vy = p.vy * .985 + .04 * k; p.x += p.vx * k; p.y += p.vy * k; p.a -= p.d * k;
+    if (p.a <= 0) return false;
+    cx.globalAlpha = p.a; cx.fillStyle = p.c; cx.beginPath(); cx.arc(p.x, p.y, 2, 0, 6.3); cx.fill(); return true;
+  });
+  cx.globalAlpha = 1;
+}
+function finale(){
+  fade(m1, 0, 2000, () => m1.pause());                                // la canzone 1 sfuma…
+  m2.currentTime = 0; m2.volume = 0; m2.play().catch(() => {}); fade(m2, .9, 3000);   // …e parte la canzone 2
+  show('finale'); size();
+  cancelAnimationFrame(raf); last = performance.now(); raf = requestAnimationFrame(frame);
+  launch(); setTimeout(launch, 350); setTimeout(launch, 800);
+}
+$('again').onclick = () => {                                          // torna all’album
+  fade(m2, 0, 1500, () => m2.pause());
+  m1.play().catch(() => {}); fade(m1, .8, 2000);
+  cur = N - 1; busy = false; render(); show('book');
+};
+</script>
+</body>
+</html>
